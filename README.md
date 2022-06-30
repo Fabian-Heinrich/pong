@@ -1,3 +1,5 @@
+![Pong](https://github.com/Fabian-Heinrich/pong/main/.readme/pong.png)
+
 # Pong
 
 Made with Python3.8 + Pygame
