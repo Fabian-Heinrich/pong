@@ -32,3 +32,4 @@ class Ball(pygame.sprite.Sprite):
         for wall in walls:
             if pygame.sprite.collide_mask(self, wall):
                 self.direction *= wall.directionChangeOnCollision
+                self.update()
