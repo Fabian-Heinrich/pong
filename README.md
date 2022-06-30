@@ -1,4 +1,4 @@
-![Pong](https://github.com/Fabian-Heinrich/pong/main/.readme/pong.png)
+![Pong](https://raw.githubusercontent.com/Fabian-Heinrich/pong/main/.readme/pong.png)
 
 # Pong
 
