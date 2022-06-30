@@ -1,7 +1,7 @@
 import pygame
 
 from Position import Position
-from Wall import Wall
+from Block import Block
 
 
 class Ball(pygame.sprite.Sprite):
@@ -28,12 +28,7 @@ class Ball(pygame.sprite.Sprite):
     def draw(self, screen: pygame.Surface):
         screen.blit(self.image, self.rect)
 
-    def handle_collisions(self, border_bottom: Wall, border_top: Wall, border_left: Wall, border_right: Wall):
-        if pygame.sprite.collide_mask(self, border_bottom):
-            self.direction *= Position(1, -1)
-        if pygame.sprite.collide_mask(self, border_top):
-            self.direction *= Position(1, -1)
-        if pygame.sprite.collide_mask(self, border_left):
-            self.direction *= Position(-1, 1)
-        if pygame.sprite.collide_mask(self, border_right):
-            self.direction *= Position(-1, 1)
+    def handle_collisions(self, walls: pygame.sprite.Group):
+        for wall in walls:
+            if pygame.sprite.collide_mask(self, wall):
+                self.direction *= wall.directionChangeOnCollision
