@@ -17,13 +17,12 @@ class Game:
     GREEN = pygame.Color(0,255,0)
     BLUE = pygame.Color(0,0,255)
 
-    PADDLE_SPEED = 6
-
     def __init__(self, width, height, FPS) -> None:
         pygame.init()
 
         self.FPS = FPS
         self.running = True
+        self.defaultBallSpeed = 600
 
         self.clock = pygame.time.Clock()
         self.defaultFont = pygame.font.SysFont(pygame.font.get_default_font(), 50)
@@ -32,7 +31,7 @@ class Game:
         self.screen = pygame.display.set_mode(self.size)
         self.center = Position(self.width/2, self.height/2)
 
-        self.ball = Ball(25, self.RED, self.center, Position(700, 700))
+        self.ball = Ball(25, self.RED, self.center, Position(self.defaultBallSpeed , self.defaultBallSpeed))
 
         border_bottom = Block(-100, self.height - 10, self.width + 100, 100, self.BLUE, Position(1,-1))
         border_top = Block(-100, -100, self.width + 100, 110, self.BLUE, Position(1,-1))
@@ -93,8 +92,8 @@ class Game:
 
 
     def handel_game_objects(self, dt):
-        self.ball.handle_collisions(self.allBlocks)
 
+        self.check_ball_collision(dt)
         self.gameSprites.update(dt)
 
     def draw_screen(self):
@@ -117,4 +116,11 @@ class Game:
 
     def reset_ball(self):
         self.ball.rect.center = self.center.get_pos()
-        self.ball.direction = Position(random.choice([700, -700]), random.choice([700, -700]))
+        self.ball.direction = Position(random.choice([self.defaultBallSpeed , -self.defaultBallSpeed ]), random.choice([self.defaultBallSpeed , -self.defaultBallSpeed ]))
+
+
+    def check_ball_collision(self, dt):
+        for block in self.allBlocks:
+            if pygame.sprite.collide_mask(self.ball, block):
+                self.ball.direction *= block.directionChangeOnCollision
+                self.ball.update(dt)

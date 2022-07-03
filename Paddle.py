@@ -18,7 +18,7 @@ class Paddle(pygame.sprite.Sprite):
         self.moveDown = False
 
     def get_speed(self) -> int:
-        speed = 250+(0.5*self.movementsInARow**2)
+        speed = 300+(0.5*self.movementsInARow**2)
 
         if speed > self.maxSpeed:
             return self.maxSpeed
