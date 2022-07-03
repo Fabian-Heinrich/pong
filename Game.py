@@ -27,6 +27,8 @@ class Game:
         self.clock = pygame.time.Clock()
         self.defaultFont = pygame.font.SysFont(pygame.font.get_default_font(), 50)
 
+        self.collisionSound = pygame.mixer.Sound("sounds/ping-pong-ball-hit.wav")
+
         self.size = self.width, self.height = width, height
         self.screen = pygame.display.set_mode(self.size)
         self.center = Position(self.width/2, self.height/2)
@@ -124,3 +126,4 @@ class Game:
             if pygame.sprite.collide_mask(self.ball, block):
                 self.ball.direction *= block.directionChangeOnCollision
                 self.ball.update(dt)
+                self.collisionSound.play()
