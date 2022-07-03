@@ -1,7 +1,9 @@
+import random
 import sys
 import pygame
 
 from Ball import Ball
+from Paddle import Paddle
 from Player import Player
 from Position import Position
 from Block import Block
@@ -15,20 +17,23 @@ class Game:
     GREEN = pygame.Color(0,255,0)
     BLUE = pygame.Color(0,0,255)
 
-    PADDLE_SPEED = 6
-
     def __init__(self, width, height, FPS) -> None:
         pygame.init()
 
         self.FPS = FPS
+        self.running = True
+        self.defaultBallSpeed = 600
 
         self.clock = pygame.time.Clock()
         self.defaultFont = pygame.font.SysFont(pygame.font.get_default_font(), 50)
 
+        self.collisionSound = pygame.mixer.Sound("sounds/ping-pong-ball-hit.wav")
+
         self.size = self.width, self.height = width, height
         self.screen = pygame.display.set_mode(self.size)
+        self.center = Position(self.width/2, self.height/2)
 
-        self.ball = Ball(25, self.RED, Position(self.width/2, self.height/2), Position(7, 7))
+        self.ball = Ball(25, self.RED, self.center, Position(self.defaultBallSpeed , self.defaultBallSpeed))
 
         border_bottom = Block(-100, self.height - 10, self.width + 100, 100, self.BLUE, Position(1,-1))
         border_top = Block(-100, -100, self.width + 100, 110, self.BLUE, Position(1,-1))
@@ -42,8 +47,8 @@ class Game:
         self.walls.add(border_right)
         
         self.players = []
-        self.players.append(Player(3, "Player 1", self.GREEN, Block(20, (self.height/2-(self.height/9)), 5, (self.height/9), self.GREEN, Position(-1, 1)), pygame.K_w, pygame.K_s))
-        self.players.append(Player(3, "Player 2", self.RED, Block((self.width-25), (self.height/2-(self.height/9)), 5, (self.height/9), self.RED, Position(-1, 1)), pygame.K_UP, pygame.K_DOWN))
+        self.players.append(Player(3, "Player 1", self.GREEN, Paddle(20, (self.height/2-(self.height/7)), 5, (self.height/7), self.GREEN, Position(-1, 1)), pygame.K_w, pygame.K_s))
+        self.players.append(Player(3, "Player 2", self.RED, Paddle((self.width-25), (self.height/2-(self.height/7)), 5, (self.height/7), self.RED, Position(-1, 1)), pygame.K_UP, pygame.K_DOWN))
 
         self.paddles = pygame.sprite.Group()
         for player in self.players:
@@ -53,13 +58,17 @@ class Game:
         self.allBlocks.add(self.walls)
         self.allBlocks.add(self.paddles)
 
+        self.gameSprites = pygame.sprite.Group()
+        self.gameSprites.add(self.allBlocks)
+        self.gameSprites.add(self.ball)
+
 
     def run(self):
-        while True:
-            self.clock.tick_busy_loop(self.FPS)
+        while self.running:
+            dt = self.clock.tick(self.FPS)/1000
 
             self.handle_events()
-            self.handel_game_objects()
+            self.handel_game_objects(dt)
 
             self.draw_screen()
 
@@ -67,19 +76,27 @@ class Game:
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                sys.exit()
-        
+                self.running = False
+
         pressedKeys = pygame.key.get_pressed()
+
+        if pressedKeys[pygame.K_ESCAPE]:
+            self.reset_ball()
+
         for player in self.players:
-            if pressedKeys[player.upKey]:
-                player.paddle.rect.y -= self.PADDLE_SPEED
-            if pressedKeys[player.downKey]:
-                player.paddle.rect.y += self.PADDLE_SPEED
+            if pressedKeys[player.upKey] and player.paddle.rect.y >= 0:
+                player.paddle.move_up()
+            if pressedKeys[player.downKey] and player.paddle.rect.y <= (self.height-player.paddle.rect.height):
+                player.paddle.move_down()
+            if not pressedKeys[player.upKey] and not pressedKeys[player.downKey]:
+                player.paddle.movementsInARow = 0
+                
 
 
-    def handel_game_objects(self):
-        self.ball.handle_collisions(self.allBlocks)
-        self.ball.update()
+    def handel_game_objects(self, dt):
+
+        self.check_ball_collision(dt)
+        self.gameSprites.update(dt)
 
     def draw_screen(self):
         self.screen.fill(self.BLACK)
@@ -87,7 +104,7 @@ class Game:
         self.draw_fps()
         self.draw_game_objects()
 
-        pygame.display.flip()
+        pygame.display.update()
 
     def draw_fps(self):
         fpsRoundedText = str(round(self.clock.get_fps()))
@@ -98,3 +115,15 @@ class Game:
     def draw_game_objects(self):
         self.ball.draw(self.screen)
         self.allBlocks.draw(self.screen)
+
+    def reset_ball(self):
+        self.ball.rect.center = self.center.get_pos()
+        self.ball.direction = Position(random.choice([self.defaultBallSpeed , -self.defaultBallSpeed ]), random.choice([self.defaultBallSpeed , -self.defaultBallSpeed ]))
+
+
+    def check_ball_collision(self, dt):
+        for block in self.allBlocks:
+            if pygame.sprite.collide_mask(self.ball, block):
+                self.ball.direction *= block.directionChangeOnCollision
+                self.ball.update(dt)
+                self.collisionSound.play()

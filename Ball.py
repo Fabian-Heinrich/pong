@@ -1,4 +1,5 @@
 import pygame
+import pygame.gfxdraw
 
 from Position import Position
 from Block import Block
@@ -15,20 +16,16 @@ class Ball(pygame.sprite.Sprite):
         self.direction = direction
 
         self.image = pygame.Surface((radius*4,radius*4))
-        pygame.draw.circle(self.image, color, (radius*2,radius*2), radius)
+        pygame.gfxdraw.aacircle(self.image, radius*2, radius*2, radius, color)
+        pygame.gfxdraw.filled_circle(self.image, radius*2, radius*2, radius, color)
         self.image.set_colorkey((0,0,0))
 
         self.rect = self.image.get_rect(center = center.get_pos())
         self.mask = pygame.mask.from_surface(self.image)
 
-    def update(self):
-        self.rect.x += self.direction.x
-        self.rect.y += self.direction.y
+    def update(self, dt):
+        self.rect.x += round(self.direction.x * dt)
+        self.rect.y += round(self.direction.y * dt)
 
     def draw(self, screen: pygame.Surface):
         screen.blit(self.image, self.rect)
-
-    def handle_collisions(self, walls: pygame.sprite.Group):
-        for wall in walls:
-            if pygame.sprite.collide_mask(self, wall):
-                self.direction *= wall.directionChangeOnCollision
