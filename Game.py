@@ -23,6 +23,7 @@ class Game:
         pygame.init()
 
         self.FPS = FPS
+        self.running = True
 
         self.clock = pygame.time.Clock()
         self.defaultFont = pygame.font.SysFont(pygame.font.get_default_font(), 50)
@@ -58,7 +59,7 @@ class Game:
 
 
     def run(self):
-        while True:
+        while self.running:
             self.clock.tick_busy_loop(self.FPS)
 
             self.handle_events()
@@ -70,7 +71,7 @@ class Game:
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                sys.exit()
+                self.running = False
 
         pressedKeys = pygame.key.get_pressed()
 
