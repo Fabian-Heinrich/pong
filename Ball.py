@@ -21,9 +21,9 @@ class Ball(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center = center.get_pos())
         self.mask = pygame.mask.from_surface(self.image)
 
-    def update(self):
-        self.rect.x += self.direction.x
-        self.rect.y += self.direction.y
+    def update(self, dt):
+        self.rect.x += round(self.direction.x * dt)
+        self.rect.y += round(self.direction.y * dt)
 
     def draw(self, screen: pygame.Surface):
         screen.blit(self.image, self.rect)
@@ -32,4 +32,3 @@ class Ball(pygame.sprite.Sprite):
         for wall in walls:
             if pygame.sprite.collide_mask(self, wall):
                 self.direction *= wall.directionChangeOnCollision
-                self.update()

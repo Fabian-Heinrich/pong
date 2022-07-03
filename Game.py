@@ -32,7 +32,7 @@ class Game:
         self.screen = pygame.display.set_mode(self.size)
         self.center = Position(self.width/2, self.height/2)
 
-        self.ball = Ball(25, self.RED, self.center, Position(7, 7))
+        self.ball = Ball(25, self.RED, self.center, Position(700, 700))
 
         border_bottom = Block(-100, self.height - 10, self.width + 100, 100, self.BLUE, Position(1,-1))
         border_top = Block(-100, -100, self.width + 100, 110, self.BLUE, Position(1,-1))
@@ -57,13 +57,17 @@ class Game:
         self.allBlocks.add(self.walls)
         self.allBlocks.add(self.paddles)
 
+        self.gameSprites = pygame.sprite.Group()
+        self.gameSprites.add(self.allBlocks)
+        self.gameSprites.add(self.ball)
+
 
     def run(self):
         while self.running:
-            self.clock.tick_busy_loop(self.FPS)
+            dt = self.clock.tick(self.FPS)/1000
 
             self.handle_events()
-            self.handel_game_objects()
+            self.handel_game_objects(dt)
 
             self.draw_screen()
 
@@ -81,15 +85,17 @@ class Game:
         for player in self.players:
             if pressedKeys[player.upKey] and player.paddle.rect.y >= 0:
                 player.paddle.move_up()
-            elif pressedKeys[player.downKey] and player.paddle.rect.y <= (self.height-player.paddle.rect.height):
+            if pressedKeys[player.downKey] and player.paddle.rect.y <= (self.height-player.paddle.rect.height):
                 player.paddle.move_down()
-            else:
+            if not pressedKeys[player.upKey] and not pressedKeys[player.downKey]:
                 player.paddle.movementsInARow = 0
+                
 
 
-    def handel_game_objects(self):
+    def handel_game_objects(self, dt):
         self.ball.handle_collisions(self.allBlocks)
-        self.ball.update()
+
+        self.gameSprites.update(dt)
 
     def draw_screen(self):
         self.screen.fill(self.BLACK)
@@ -111,4 +117,4 @@ class Game:
 
     def reset_ball(self):
         self.ball.rect.center = self.center.get_pos()
-        self.ball.direction = Position(random.choice([7, -7]), random.choice([7, -7]))
+        self.ball.direction = Position(random.choice([700, -700]), random.choice([700, -700]))
