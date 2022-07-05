@@ -3,6 +3,7 @@ import sys
 import pygame
 
 from Ball import Ball
+from Color import Color
 from GameScene import GameScene
 from Paddle import Paddle
 from Player import Player
@@ -10,13 +11,6 @@ from Position import Position
 from Block import Block
 
 class Game:
-
-    WHITE = pygame.Color(255,255,255)
-    BLACK = pygame.Color(0,0,0)
-    RED = pygame.Color(255,0,0)
-    GREEN = pygame.Color(0,255,0)
-    BLUE = pygame.Color(0,0,255)
-
     def __init__(self, width, height, FPS) -> None:
         pygame.init()
 
@@ -34,12 +28,12 @@ class Game:
         self.screen = pygame.display.set_mode(self.size)
         self.center = Position(self.width/2, self.height/2)
 
-        self.ball = Ball(25, self.RED, self.center, Position(self.defaultBallSpeed , self.defaultBallSpeed))
+        self.ball = Ball(25, Color.RED, self.center, Position(self.defaultBallSpeed , self.defaultBallSpeed))
 
-        wall_bottom = Block(-100, self.height - 10, self.width + 100, 100, self.BLUE, Position(1,-1))
-        wall_top = Block(-100, -100, self.width + 100, 110, self.BLUE, Position(1,-1))
-        wall_left = Block(-100, -100, 110, self.height+100, self.GREEN, Position(0, 0))
-        wall_right = Block(self.width-10, -100, 100, self.height+100, self.RED, Position(0, 0))
+        wall_bottom = Block(-100, self.height - 10, self.width + 100, 100, Color.BLUE, Position(1,-1))
+        wall_top = Block(-100, -100, self.width + 100, 110, Color.BLUE, Position(1,-1))
+        wall_left = Block(-100, -100, 110, self.height+100, Color.GREEN, Position(0, 0))
+        wall_right = Block(self.width-10, -100, 100, self.height+100, Color.RED, Position(0, 0))
 
         self.walls = pygame.sprite.Group()
         self.walls.add(wall_bottom)
@@ -48,8 +42,8 @@ class Game:
         self.walls.add(wall_right)
         
         self.players = []
-        self.players.append(Player(3, "Player 1", self.GREEN, Paddle(20, (self.height/2-(self.height/7)), 5, (self.height/7), self.GREEN, Position(-1, 1)), pygame.K_w, pygame.K_s, wall_left))
-        self.players.append(Player(3, "Player 2", self.RED, Paddle((self.width-25), (self.height/2-(self.height/7)), 5, (self.height/7), self.RED, Position(-1, 1)), pygame.K_UP, pygame.K_DOWN, wall_right))
+        self.players.append(Player(3, "Player 1", Color.GREEN, Paddle(20, (self.height/2-(self.height/7)), 5, (self.height/7), Color.GREEN, Position(-1, 1)), pygame.K_w, pygame.K_s, wall_left))
+        self.players.append(Player(3, "Player 2", Color.RED, Paddle((self.width-25), (self.height/2-(self.height/7)), 5, (self.height/7), Color.RED, Position(-1, 1)), pygame.K_UP, pygame.K_DOWN, wall_right))
 
         self.paddles = pygame.sprite.Group()
         for player in self.players:
@@ -101,7 +95,7 @@ class Game:
         self.gameSprites.update(dt)
 
     def draw_play_screen(self):
-        self.screen.fill(self.BLACK)
+        self.screen.fill(Color.BLACK)
 
         self.draw_fps_text()
         self.draw_players_hp_text()
@@ -110,7 +104,7 @@ class Game:
         pygame.display.update()
     
     def draw_game_over_screen(self):
-        self.screen.fill(self.BLACK)
+        self.screen.fill(Color.BLACK)
 
         self.draw_players_hp_text()
         self.draw_game_over_text()
@@ -119,7 +113,7 @@ class Game:
 
     def draw_fps_text(self):
         fpsRoundedText = "FPS: " + str(round(self.clock.get_fps()))
-        fpsTextRendered = self.defaultFont.render(fpsRoundedText, True, self.WHITE)
+        fpsTextRendered = self.defaultFont.render(fpsRoundedText, True, Color.WHITE)
 
         self.screen.blit(fpsTextRendered, (10,10))
 
@@ -127,12 +121,12 @@ class Game:
         for i in range (0, len(self.players)):
             player = self.players[i]
             playerHpText = player.name + ": " + str(player.healthpoints)
-            playerHpTextRendered = self.defaultFont.render(playerHpText, True, self.WHITE)
+            playerHpTextRendered = self.defaultFont.render(playerHpText, True, Color.WHITE)
 
             self.screen.blit(playerHpTextRendered, (self.width/2-playerHpTextRendered.get_width()/2, 10+(playerHpTextRendered.get_height()*i+5)))
     
     def draw_game_over_text(self):
-        gameOverTextRendered = self.defaultFont.render("Game over", True, self.WHITE)
+        gameOverTextRendered = self.defaultFont.render("Game over", True, Color.WHITE)
 
         self.screen.blit(gameOverTextRendered, (self.width/2-gameOverTextRendered.get_width()/2, self.height/2-gameOverTextRendered.get_height()/2))
 
