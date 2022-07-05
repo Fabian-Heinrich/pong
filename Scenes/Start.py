@@ -1,18 +1,17 @@
 import pygame
 from Color import Color
-from Scenes.Scene import Scene
-from Scenes.Scenes import Scenes
+import Scenes
 
-class Start(Scene):
+
+class Start(Scenes.Scene.Scene):
     def __init__(self, screen) -> None:
         super().__init__(screen)
-        self.nextScene = Scenes.START
 
         self.defaultFont = pygame.font.SysFont(pygame.font.get_default_font(), 50)
 
     def handle_events(self, events, pressedKeys):
         if pressedKeys[pygame.K_SPACE] or pressedKeys[pygame.K_KP_ENTER] or pressedKeys[pygame.K_RETURN]:
-            self.switch_scene(Scenes.PLAY)
+            self.switch_scene(Scenes.Play.Play(self.screen))
 
     def render(self):
         self.screen.fill(Color.BLACK)

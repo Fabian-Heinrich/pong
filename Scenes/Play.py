@@ -1,21 +1,19 @@
 import random
 import pygame
+import Scenes.End 
+import Scenes.Scene
+
 from Ball import Ball
 from Block import Block
 from Color import Color
 from Paddle import Paddle
 from Player import Player
 from Position import Position
-from Scenes.End import End
-from Scenes.Scene import Scene
-from Scenes.Scenes import Scenes
 
 
-class Play(Scene):
+class Play(Scenes.Scene.Scene):
     def __init__(self, screen: pygame.surface.Surface) -> None:
         super().__init__(screen)
-
-        self.nextScene = Scenes.PLAY
 
         self.collisionSound = pygame.mixer.Sound("sounds/ping-pong-ball-hit.wav")
         self.defaultFont = pygame.font.SysFont(pygame.font.get_default_font(), 50)
@@ -94,7 +92,7 @@ class Play(Scene):
                     if block == player.wall:
                         self.reset_ball()
                         if player.lose_hp() == 0:
-                            self.switch_scene(Scenes.END)
+                            self.switch_scene(Scenes.End.End(self.screen))
                             self.reset()
 
     def reset_ball(self):

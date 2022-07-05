@@ -5,7 +5,7 @@ from Position import Position
 class Scene:
 
     def __init__(self, screen: pygame.surface.Surface) -> None:
-        self.nextScene = None
+        self.nextScene = self
         self.screen = screen
 
         self.width = screen.get_width()

@@ -9,7 +9,6 @@ from Position import Position
 from Block import Block
 from Scenes.End import End
 from Scenes.Play import Play
-from Scenes.Scenes import Scenes
 from Scenes.Start import Start
 
 class Game:
@@ -24,13 +23,7 @@ class Game:
         self.size = self.width, self.height = width, height
         self.screen = pygame.display.set_mode(self.size)
 
-        self.scenes = {
-            Scenes.START: Start(self.screen),
-            Scenes.PLAY: Play(self.screen),
-            Scenes.END: End(self.screen)
-        }
-
-        self.activeScene = Scenes.START
+        self.activeScene = Start(self.screen)
 
 
     def run(self):
@@ -38,13 +31,13 @@ class Game:
             dt = self.clock.tick(self.FPS)/1000
 
             self.handle_events()
-            self.scenes[self.activeScene].update(dt)
-            self.scenes[self.activeScene].render()
+            self.activeScene.update(dt)
+            self.activeScene.render()
             self.draw_fps_text()
 
             pygame.display.update()
 
-            self.activeScene = self.scenes[self.activeScene].nextScene
+            self.activeScene = self.activeScene.nextScene
 
     def handle_events(self):
         
@@ -57,7 +50,7 @@ class Game:
 
         pressedKeys = pygame.key.get_pressed()
 
-        self.scenes[self.activeScene].handle_events(events, pressedKeys)
+        self.activeScene.handle_events(events, pressedKeys)
 
     def draw_fps_text(self):
         fpsRoundedText = "FPS: " + str(round(self.clock.get_fps()))
