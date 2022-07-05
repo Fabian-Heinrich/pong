@@ -87,6 +87,7 @@ class Play(Scenes.Scene.Scene):
                 self.ball.direction *= block.directionChangeOnCollision
                 self.ball.update(dt)
                 self.collisionSound.play()
+                self.ball.direction *= Position(1.01, 1.01)
 
                 for player in self.players:
                     if block == player.wall:
