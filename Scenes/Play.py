@@ -22,10 +22,10 @@ class Play(Scenes.Scene.Scene):
 
         self.ball = Ball(25, Color.RED, self.center, Position(self.defaultBallSpeed , self.defaultBallSpeed))
 
-        wall_bottom = Block(-100, self.height - 10, self.width + 100, 100, Color.BLUE, Position(1,-1))
-        wall_top = Block(-100, -100, self.width + 100, 110, Color.BLUE, Position(1,-1))
-        wall_left = Block(-100, -100, 110, self.height+100, Color.GREEN, Position(0, 0))
-        wall_right = Block(self.width-10, -100, 100, self.height+100, Color.RED, Position(0, 0))
+        wall_bottom = Block(-100, self.height, self.width + 100, 100, Color.BLACK, Position(1,-1))
+        wall_top = Block(-100, -100, self.width + 100, 100, Color.BLACK, Position(1,-1))
+        wall_left = Block(-100, -100, 50, self.height+100, Color.BLACK, Position(0, 0))
+        wall_right = Block(self.width+50, -100, 100, self.height+100, Color.BLACK, Position(0, 0))
 
         self.walls = pygame.sprite.Group()
         self.walls.add(wall_bottom)
@@ -34,8 +34,8 @@ class Play(Scenes.Scene.Scene):
         self.walls.add(wall_right)
         
         self.players = []
-        self.players.append(Player(3, "Player 1", Color.GREEN, Paddle(20, (self.height/2-(self.height/7)), 5, (self.height/7), Color.GREEN, Position(-1, 1)), pygame.K_w, pygame.K_s, wall_left))
-        self.players.append(Player(3, "Player 2", Color.RED, Paddle((self.width-25), (self.height/2-(self.height/7)), 5, (self.height/7), Color.RED, Position(-1, 1)), pygame.K_UP, pygame.K_DOWN, wall_right))
+        self.players.append(Player(3, "Player 1", Color.GREEN, Paddle(10, (self.height/2-(self.height/7)), 5, (self.height/7), Color.GREEN, Position(-1, 1)), pygame.K_w, pygame.K_s, wall_left))
+        self.players.append(Player(3, "Player 2", Color.RED, Paddle((self.width-15), (self.height/2-(self.height/7)), 5, (self.height/7), Color.RED, Position(-1, 1)), pygame.K_UP, pygame.K_DOWN, wall_right))
 
         self.paddles = pygame.sprite.Group()
         for player in self.players:
@@ -83,9 +83,9 @@ class Play(Scenes.Scene.Scene):
 
     def check_ball_collision(self, dt):
         for block in self.allBlocks:
-            if pygame.sprite.collide_mask(self.ball, block):
-                self.ball.direction *= block.directionChangeOnCollision
-                self.ball.update(dt)
+            collison = pygame.sprite.collide_mask(self.ball, block)
+            if collison:
+                self.update_ball_position_on_collision(block, collison, dt)
                 self.collisionSound.play()
                 self.ball.direction *= Position(1.01, 1.01)
 
@@ -95,6 +95,10 @@ class Play(Scenes.Scene.Scene):
                         if player.lose_hp() == 0:
                             self.switch_scene(Scenes.End.End(self.screen))
                             self.reset()
+
+    def update_ball_position_on_collision(self, block, collison, dt):
+        self.ball.direction *= block.directionChangeOnCollision
+        self.ball.update(dt)
 
     def reset_ball(self):
         self.ball.rect.center = self.center.get_pos()
