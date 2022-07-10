@@ -1,4 +1,4 @@
-import pygame, sys
+import sys
 
 from Game import Game
 

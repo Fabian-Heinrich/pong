@@ -83,9 +83,8 @@ class Play(Scenes.Scene.Scene):
 
     def check_ball_collision(self, dt):
         for block in self.allBlocks:
-            collison = pygame.sprite.collide_mask(self.ball, block)
-            if collison:
-                self.update_ball_position_on_collision(block, collison, dt)
+            if pygame.sprite.collide_mask(self.ball, block):
+                self.update_ball_position_on_collision(block, dt)
                 self.collisionSound.play()
                 self.ball.direction *= Position(1.01, 1.01)
 
@@ -96,9 +95,17 @@ class Play(Scenes.Scene.Scene):
                             self.switch_scene(Scenes.End.End(self.screen))
                             self.reset()
 
-    def update_ball_position_on_collision(self, block, collison, dt):
+    def update_ball_position_on_collision(self, block: Block, dt):
+        if block.directionChangeOnCollision.x == -1 and self.ball.goes_right():
+            self.ball.rect.x = block.rect.x - self.ball.rect.width
+        elif block.directionChangeOnCollision.x == -1 and self.ball.goes_left():
+            self.ball.rect.x = block.rect.x + block.rect.width
+        elif block.directionChangeOnCollision.y == -1 and self.ball.goes_up():
+            self.ball.rect.y = block.rect.y + block.rect.height
+        elif block.directionChangeOnCollision.y == -1 and self.ball.goes_down():
+            self.ball.rect.y = block.rect.y - self.ball.rect.height
+
         self.ball.direction *= block.directionChangeOnCollision
-        self.ball.update(dt)
 
     def reset_ball(self):
         self.ball.rect.center = self.center.get_pos()
