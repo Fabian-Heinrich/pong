@@ -44,7 +44,7 @@ class Game:
         events = []
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.scenes[self.activeScene].terminate()
+                self.activeScene.terminate()
             else:
                 events.append(event)
 

@@ -1,3 +1,4 @@
+from xmlrpc.client import Boolean
 import pygame
 import pygame.gfxdraw
 
@@ -29,3 +30,15 @@ class Ball(pygame.sprite.Sprite):
 
     def draw(self, screen: pygame.Surface):
         screen.blit(self.image, self.rect)
+
+    def goes_down(self) -> Boolean:
+        return self.direction.y > 0
+
+    def goes_up(self) -> Boolean:
+        return self.direction.y < 0
+
+    def goes_right(self) -> Boolean:
+        return self.direction.x > 0
+
+    def goes_left(self) -> Boolean:
+        return self.direction.x < 0
